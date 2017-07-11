@@ -19,24 +19,24 @@ let Tweet = bookshelf.Model.extend(
     }
   },
   {
-    postTweetRulesWithImage: function() {
-      return {
+    rules: {
+      tweet_with_image: {
         message: 'required',
         image_type: 'in:image/png,image/jpeg,image/jpg'
-      };
-    },
-    postTweetRulesWithoutImage: function() {
-      return {
+      },
+      tweet_without_image: {
         message: 'required'
-      };
+      }
     },
-    postTweetMessages: function() {
-      return {
+
+    messages: {
+      tweet: {
         'required.message': 'Message is required',
         'in.image_type': 'Image type must be in: png,jpeg'
-      };
+      }
     },
-    insertTweet: function(tweet, cb) {
+
+    insert: function(tweet, cb) {
       knex('tweets')
         .insert(tweet)
         .then(function(tweet_id) {
@@ -46,7 +46,7 @@ let Tweet = bookshelf.Model.extend(
           cb(err);
         });
     },
-    updateTweet: function(tweet_id, tweet, cb) {
+    update: function(tweet_id, tweet, cb) {
       knex('tweets as tweet')
         .where('tweet.id', tweet_id)
         .update(tweet)
@@ -57,37 +57,19 @@ let Tweet = bookshelf.Model.extend(
           cb(err);
         });
     },
-    deleteTweet: function(tweet_id, cb) {
+    remove: function(tweet_id, cb) {
       knex('tweets')
         .where('tweets.id', tweet_id)
         .del()
         .then(function(number_of_deleted) {
           cb(null, number_of_deleted);
         })
-        .catch(function(err) {
-          cb(err);
-        });
+        .catch(cb);
     },
-    generatePath: function(image) {
+
+    generatePath: image => {
       let image_name = util.format('%s%s', uuid(), path.extname(image.originalFilename));
       return 'public/images/uploaded/' + image_name;
-    },
-    generateValidate: function(image, message) {
-      let image_type = image ? image.type : '';
-
-      let validateObject = {
-        message: message
-      };
-
-      let validate = null;
-
-      if (image) {
-        validateObject.image_type = image_type;
-        validate = new Validator(validateObject, Tweet.postTweetRulesWithImage(), Tweet.postTweetMessages());
-      } else {
-        validate = new Validator(validateObject, Tweet.postTweetRulesWithoutImage(), Tweet.postTweetMessages());
-      }
-      return validate;
     }
   }
 );

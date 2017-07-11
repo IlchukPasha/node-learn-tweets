@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
         return res.status(404).end();
       }
       if (req._user.role === 'admin' || req._user.id === tweet.user_id) {
-        req._image = tweet.image;
+        req._image_to_delete = tweet.image;
         return next();
       }
       res.status(403).end();

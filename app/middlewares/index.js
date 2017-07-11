@@ -2,7 +2,9 @@ module.exports = {
   checkAuth: require('./checkAuth'),
   checkRole: require('./checkRole'),
   checkRepeatLike: require('./checkRepeatLike'),
-  checkIsAdmin: require('./checkIsAdmin'),
+  checkUserAdmin: require('./checkUserAdmin'),
   checkGetUser: require('./checkGetUser'),
-  validateRemoveLike: require('./validators/validateRemoveLike')
+  checkImageUpload: require('./checkImageUpload'),
+  validateRemoveLike: require('./validators/validateRemoveLike'),
+  validateTweet: require('./validators/validateTweet')
 };

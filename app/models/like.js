@@ -13,32 +13,30 @@ let Like = bookshelf.Model.extend(
     }
   },
   {
-    likeRules: function() {
-      return {
+    rules: {
+      like:{
         tweet_id: 'required|tweet_exist'
-      };
-    },
-    likeRemoveRules: function() {
-      return {
+      },
+      remove_like: {
         tweet_id: 'required'
-      };
+      }
     },
-    likeMessages: function() {
-      return {
+
+    messages: {
+      like: {
         'required.tweet_id': 'Tweet id is required'
-      };
+      }
     },
-    insertLike: function(like, cb) {
+
+    insert: function(like, cb) {
       knex('likes')
         .insert(like)
         .then(function(like_id) {
           cb(null, like_id);
         })
-        .catch(function(err) {
-          cb(err);
-        });
+        .catch(cb);
     },
-    removeLike: function(like, cb) {
+    remove: function(like, cb) {
       knex('likes')
         .where('likes.user_id', like.user_id)
         .where('likes.tweet_id', like.tweet_id)

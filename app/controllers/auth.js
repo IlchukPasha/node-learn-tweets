@@ -11,7 +11,7 @@ const User = require('../models/user');
 const Role = require('../models/role');
 
 router.post('/signin', function(req, res, next) {
-  let validate = new Validator(req.body, User.rules.signin, User.signinMessages());
+  let validate = new Validator(req.body, User.rules.signin, User.messages.signin);
 
   if (validate.passes()) {
     knex('users as u')
@@ -40,15 +40,15 @@ router.post('/signin', function(req, res, next) {
 });
 
 router.post('/signup', function(req, res, next) {
-  var validate = new Validator(req.body, User.signupRules(), User.signupMessages());
+  let validate = new Validator(req.body, User.rules.signup, User.messages.signup);
 
   // run only one callback from passes or from fails
   validate.passes(function() {
-    Role.getRoleByTitle('user', function(err, role) {
+    Role.getByTitle('user', function(err, role) {
       if (err) {
         return next(err);
       }
-      var user = {
+      let user = {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         email: req.body.email,
@@ -59,7 +59,7 @@ router.post('/signup', function(req, res, next) {
       knex('users')
         .insert(user)
         .then(function(user_id) {
-          var token = jwt.sign({ id: user_id[0] }, env.secret, { expiresIn: '120d' });
+          let token = jwt.sign({ id: user_id[0] }, env.secret, { expiresIn: '120d' });
           res.status(201).json({ token });
         })
         .catch(next);

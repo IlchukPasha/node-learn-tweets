@@ -20,10 +20,13 @@ module.exports = function(req, res, next) {
         return res.status(401).end();
       }
       if (decoded) {
-        User.getUserById(decoded.id, function(err, user) {
+        User.getById(decoded.id, function(err, user) {
           if (err) return next(err);
-          if (!user) return next();
+          if (!user) return next(new Error('User not found'));
           req._user = user;
+          if (req.files.image) {
+            req._image = req.files.image;
+          }
           next();
         });
       }

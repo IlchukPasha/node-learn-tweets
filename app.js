@@ -5,19 +5,15 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multipart = require('connect-multiparty');
-//const fileUpload = require('express-fileupload');
 
 var app = express();
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(multipart());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use(fileUpload());
 require('./app/routes')(app);
 
 // catch 404 and forward to error handler
@@ -38,9 +34,6 @@ app.use(function(err, req, res, next) {
     case 'ER_DUP_ENTRY':
       res.status(409).send();
       break;
-    /*case 'ER_BAD_FIELD_ERROR':
-          res.status(400).end();
-          break;*/
     default:
       res.status(err.status || 500).end(res.locals.message);
       break;

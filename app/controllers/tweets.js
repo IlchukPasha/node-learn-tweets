@@ -1,24 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const knex = require('./../libs/knex');
-const path = require('path');
 const util = require('util');
 const uuid = require('uuid/v4');
 const fs = require('fs');
 const Validator = require('./../middlewares/validators/Validator');
-const checkRoleMdwr = require('../middlewares/index').checkRole;
+
+const {
+  checkRole: checkRoleMdwr,
+  checkImageUpload: checkImageUploadMdwr,
+  validateTweet: validateTweetMdwr
+} = require('../middlewares');
 
 const Tweet = require('../models/tweet');
 
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   knex('tweets')
-    .then(function(tweets) {
+    .then(tweets => {
       res.json(tweets);
     })
     .catch(next);
 });
 
-router.get('/:id', function(req, res, next) {
+router.get('/:id', (req, res, next) => {
   knex('tweets as tweet')
     .where('tweet.id', req.params.id)
     .first()
@@ -31,106 +35,49 @@ router.get('/:id', function(req, res, next) {
     .catch(next);
 });
 
-router.post('/', function(req, res, next) {
-  let validate = Tweet.generateValidate(req.files.image, req.body.message);
-
-  if (validate.passes()) {
-    if (req.files.image) {
-      let targetPath = Tweet.generatePath(req.files.image);
-      fs.rename(req.files.image.path, targetPath, function(err) {
-        if (err) {
-          return next(err);
-        }
-        let tweet = {
-          message: req.body.message,
-          image: targetPath,
-          user_id: req._user.id
-        };
-        Tweet.insertTweet(tweet, function(err, tweet_id) {
-          if (err) {
-            return next(err);
-          }
-          res.status(201).end();
-        });
-      });
-    } else {
-      let tweet = {
-        message: req.body.message,
-        user_id: req._user.id
-      };
-      Tweet.insertTweet(tweet, function(err, tweet_id) {
-        if (err) {
-          return next(err);
-        }
-        res.status(201).end();
-      });
+router.post('/', validateTweetMdwr, checkImageUploadMdwr, (req, res, next) => {
+  let tweet = {
+    message: req.body.message,
+    image: req._targetPath || null,
+    user_id: req._user.id
+  };
+  Tweet.insert(tweet, (err, tweet_id) => {
+    if (err) {
+      return next(err);
     }
-  } else {
-    res.status(400).send(validate.errors);
-  }
+    res.status(201).end();
+  });
 });
 
-router.put('/:id', checkRoleMdwr, function(req, res, next) {
-  let validate = Tweet.generateValidate(req.files.image, req.body.message);
-
-  if (validate.passes()) {
-    if (req.files.image) {
-      let targetPath = Tweet.generatePath(req.files.image);
-      fs.rename(req.files.image.path, targetPath, function(err) {
-        if (err) {
-          return next(err);
-        }
-        let tweet = {
-          message: req.body.message,
-          image: targetPath
-        };
-        Tweet.updateTweet(req.params.id, tweet, function(err, number_upd_tweets) {
-          if (err) {
-            return next(err);
-          }
-          if (fs.existsSync(req._image)) {
-            fs.unlink(req._image, function(err) {
-              if (err) {
-                return next(err);
-              }
-              res.status(200).end();
-            });
-          } else {
-            res.status(200).end();
-          }
-        });
-      });
-    } else {
-      console.log('else');
-      let tweet = {
-        message: req.body.message
-      };
-      Tweet.updateTweet(req.params.id, tweet, function(err, number_upd_tweets) {
-        if (err) {
-          return next(err);
-        }
-        res.status(200).end();
-      });
-    }
-  } else {
-    res.status(400).send(validate.errors);
+router.put('/:id', checkRoleMdwr, validateTweetMdwr, checkImageUploadMdwr, (req, res, next) => {
+  let tweet = {
+    message: req.body.message
+  };
+  if (req._targetPath) {
+    tweet.image = req._targetPath;
   }
+  Tweet.update(req.params.id, tweet, (err, number_upd_tweets) => {
+    if (err) {
+      return next(err);
+    }
+    res.status(200).end();
+  });
 });
 
-router.delete('/:id', checkRoleMdwr, function(req, res, next) {
-  Tweet.deleteTweet(req.params.id, function(err, number_of_deleted) {
+router.delete('/:id', checkRoleMdwr, (req, res, next) => {
+  Tweet.remove(req.params.id, (err, number_of_deleted) => {
     if (err) {
       return next(err);
     }
     if (fs.existsSync(req._image)) {
-      fs.unlink(req._image, function(err) {
+      fs.unlink(req._image, err => {
         if (err) {
           return next(err);
         }
-        res.status(200).end();
+        res.status(204).end();
       });
     } else {
-      res.status(200).end();
+      res.status(204).end();
     }
   });
 });
