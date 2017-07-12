@@ -18,6 +18,15 @@ let Role = bookshelf.Model.extend(
           cb(null, role);
         })
         .catch(cb);
+    },
+
+    getList: function(cb) {
+      knex('roles as r')
+        .select('r.id as id', 'r.title as title')
+        .then(roles => {
+          cb(null, roles);
+        })
+        .catch(cb);
     }
   }
 );

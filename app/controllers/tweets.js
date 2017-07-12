@@ -41,7 +41,7 @@ router.post('/', validateTweetMdwr, checkImageUploadMdwr, (req, res, next) => {
     image: req._targetPath || null,
     user_id: req._user.id
   };
-  Tweet.insert(tweet, (err, tweet_id) => {
+  Tweet.insert(tweet, err => {
     if (err) {
       return next(err);
     }

@@ -1,13 +1,17 @@
-var authCtrl = require('./controllers/index').auth;
-var tweetsCtrl = require('./controllers/index').tweets;
-var likesCtrl = require('./controllers/index').likes;
-var usersCtrl = require('./controllers/index').users;
+let {
+  auth: authCtrl,
+  tweets: tweetsCtrl,
+  likes: likesCtrl,
+  users: usersCtrl,
+  roles: rolesCtrl
+} = require('./controllers');
 
-var checkAuthMdwr = require('./middlewares/index').checkAuth;
+let checkAuthMdwr = require('./middlewares/index').checkAuth;
 
 module.exports = function(app) {
   app.use('/api/v1', authCtrl);
   app.use('/api/v1/tweets', checkAuthMdwr, tweetsCtrl);
   app.use('/api/v1/likes', checkAuthMdwr, likesCtrl);
   app.use('/api/v1/users', checkAuthMdwr, usersCtrl);
+  app.use('/api/v1/roles', checkAuthMdwr, rolesCtrl);
 };

@@ -6,5 +6,6 @@ module.exports = {
   checkGetUser: require('./checkGetUser'),
   checkImageUpload: require('./checkImageUpload'),
   validateRemoveLike: require('./validators/validateRemoveLike'),
-  validateTweet: require('./validators/validateTweet')
+  validateTweet: require('./validators/validateTweet'),
+  validateUser: require('./validators/validateUser')
 };
