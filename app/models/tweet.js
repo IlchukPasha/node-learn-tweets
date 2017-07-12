@@ -20,11 +20,11 @@ let Tweet = bookshelf.Model.extend(
   },
   {
     rules: {
-      tweet_with_image: {
+      with_image: {
         message: 'required',
         image_type: 'in:image/png,image/jpeg,image/jpg'
       },
-      tweet_without_image: {
+      without_image: {
         message: 'required'
       }
     },

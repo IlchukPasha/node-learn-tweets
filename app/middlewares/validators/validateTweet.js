@@ -12,9 +12,9 @@ module.exports = (req, res, next) => {
 
   if (req._image) {
     validateObject.image_type = image_type;
-    validate = new Validator(validateObject, Tweet.rules.tweet_with_image, Tweet.messages.tweet);
+    validate = new Validator(validateObject, Tweet.rules.with_image, Tweet.messages.tweet);
   } else {
-    validate = new Validator(validateObject, Tweet.rules.tweet_without_image, Tweet.messages.tweet);
+    validate = new Validator(validateObject, Tweet.rules.without_image, Tweet.messages.tweet);
   }
 
   if (validate.passes()) {

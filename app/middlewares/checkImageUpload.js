@@ -11,13 +11,7 @@ module.exports = (req, res, next) => {
       } else {
         req._targetPath = targetPath;
         if (fs.existsSync(req._image_to_delete)) {
-          fs.unlink(req._image_to_delete, err => {
-            if (err) {
-              return next(err);
-            } else {
-              next();
-            }
-          });
+          fs.unlink(req._image_to_delete, next);
         } else {
           next();
         }
