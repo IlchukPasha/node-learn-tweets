@@ -1,9 +1,8 @@
 const bookshelf = require('../libs/bookshelf');
 const knex = require('./../libs/knex');
-const { omit } = require('lodash');
 bookshelf.plugin('registry');
 
-var User = bookshelf.Model.extend(
+let User = bookshelf.Model.extend(
   {
     // instance methods
     tableName: 'users',
@@ -35,7 +34,7 @@ var User = bookshelf.Model.extend(
         password: 'required|min:5',
         first_name: 'required|min:5|max:30',
         last_name: 'required|min:5|max:30',
-        role_id: 'required|role_exist'
+        roles: 'required|roles_exist'
       }
     },
 
@@ -65,14 +64,16 @@ var User = bookshelf.Model.extend(
         .select(
           'u.id as id',
           'u.email as email',
-          'r.title as role',
+          'u.roles as roles',
           'u.first_name as first_name',
           'u.last_name as last_name'
         )
         .where('u.id', user_id)
-        .innerJoin('roles as r', 'u.role_id', 'r.id')
         .first()
         .then(user => {
+          if (user) {
+            user.roles = user.roles.split(',');
+          }
           cb(null, user);
         })
         .catch(cb);
@@ -83,22 +84,49 @@ var User = bookshelf.Model.extend(
         .select(
           'u.id as id',
           'u.email as email',
-          'r.title as role',
+          'u.roles as roles',
           'u.first_name as first_name',
           'u.last_name as last_name'
         )
-        .innerJoin('roles as r', 'u.role_id', 'r.id')
         .then(users => {
+          if (users) {
+            for (let i = 0; i < users.length; i++) {
+              users[i].roles = users[i].roles.split(',');
+            }
+          }
           cb(null, users);
         })
         .catch(cb);
     },
 
     insert: function(user, cb) {
+      if (typeof user.roles !== 'string') {
+        user.roles = user.roles.toString();
+      }
       knex('users')
         .insert(user)
-        .then(user_id => {
-          cb(null, user_id);
+        .then(() => {
+          cb(null);
+        })
+        .catch(cb);
+    },
+
+    update: function(user_id, user, cb) {
+      knex('users as u')
+        .update(user)
+        .where('u.id',user_id)
+        .then(() => {
+          cb(null);
+        })
+        .catch(cb);
+    },
+
+    remove: function(user_id, cb) {
+      knex('users')
+        .where('users.id', user_id)
+        .del()
+        .then(() => {
+          cb(null);
         })
         .catch(cb);
     }

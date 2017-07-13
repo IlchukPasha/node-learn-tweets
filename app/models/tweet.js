@@ -50,8 +50,8 @@ let Tweet = bookshelf.Model.extend(
       knex('tweets as tweet')
         .where('tweet.id', tweet_id)
         .update(tweet)
-        .then(function(number_upd_tweets) {
-          cb(null, number_upd_tweets);
+        .then( () => {
+          cb(null);
         })
         .catch(function(err) {
           cb(err);
@@ -61,8 +61,8 @@ let Tweet = bookshelf.Model.extend(
       knex('tweets')
         .where('tweets.id', tweet_id)
         .del()
-        .then(function(number_of_deleted) {
-          cb(null, number_of_deleted);
+        .then( () => {
+          cb(null);
         })
         .catch(cb);
     },

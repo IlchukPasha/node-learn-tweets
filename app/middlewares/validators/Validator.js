@@ -1,9 +1,27 @@
 const Validator = require('validatorjs');
 const knex = require('./../../libs/knex');
+const { roles: env_roles } = require('./../../config');
+const { includes } = require('lodash');
 
 Validator.registerAsync('unique', function(email, attribute, req, passes) {
   knex('users as u')
     .where('u.email', email)
+    .first()
+    .then(function(user) {
+      passes(!user, 'This email has already been taken.');
+    })
+    .catch(function(err) {
+      passes(false, 'error in validation');
+    });
+});
+
+Validator.registerAsync('unique_except_current_user', function(email, attribute, req, passes) {
+  console.log(req.params);
+  knex('users as u')
+    .where('u.email', email)
+    // how get addtional parameter ?
+    //.where('u.id', '!=', req.params.id)
+    .where()
     .first()
     .then(function(user) {
       passes(!user, 'This email has already been taken.');
@@ -39,17 +57,17 @@ Validator.registerAsync('tweet_exist', function(tweet_id, attribute, req, passes
     });
 });
 
-Validator.registerAsync('role_exist', function(role_id, attribute, req, passes) {
-  knex('roles as r')
-    .where('r.id', role_id)
-    .first()
-    .count('* as c')
-    .then(function(role) {
-      passes(role.c === 1, 'This role not exist.');
-    })
-    .catch(function(err) {
-      passes(false, 'error in validation');
-    });
+Validator.registerAsync('roles_exist', function(roles, attribute, req, passes) {
+  if (typeof roles === 'string') {
+    roles = roles.split(',');
+  }
+  let isIncluded = true;
+  for (let i = 0; i < roles.length; i++) {
+    if (!includes(env_roles, roles[i])) {
+      isIncluded = false;
+    }
+  }
+  passes(isIncluded, 'Role not exist.');
 });
 
 module.exports = Validator;

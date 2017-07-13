@@ -1,4 +1,5 @@
 const Validator = require('./../../middlewares/validators/Validator');
+const Tweet = require('./../../models/tweet');
 
 module.exports = (req, res, next) => {
   let image_type = req._image ? req._image.type : '';
@@ -13,7 +14,7 @@ module.exports = (req, res, next) => {
     rules['image_type'] = 'required|in:image/png,image/jpeg,image/jpg';
   }
 
-  const validate = new Validator(validateObject, rules);
+  const validate = new Validator(validateObject, rules, Tweet.messages.tweet);
 
   if (validate.passes()) {
     next();

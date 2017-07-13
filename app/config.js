@@ -1,7 +1,8 @@
-const path = require("path");
+const path = require('path');
 
 let config = {
   secret: '12qw34er56ty',
+  roles: ['admin', 'user'],
   db: {
     client: 'mysql',
     connection: {
@@ -13,10 +14,10 @@ let config = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: path.join(__dirname, "/", "..", "db", "migrations")
+      directory: path.join(__dirname, '/', '..', 'db', 'migrations')
     },
     seeds: {
-      directory: path.join(__dirname, "/", "..", "db", "seeds")
+      directory: path.join(__dirname, '/', '..', 'db', 'seeds')
     }
   }
 };

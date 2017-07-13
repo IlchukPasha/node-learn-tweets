@@ -1,4 +1,5 @@
 const knex = require('./../libs/knex');
+const { findIndex } = require('lodash');
 
 module.exports = function(req, res, next) {
   knex('tweets as t')
@@ -8,11 +9,20 @@ module.exports = function(req, res, next) {
     .count('* as c')
     .first()
     .then(tweet => {
-      if (tweet.c || req._user.role === 'admin') {
+      if (
+        findIndex(req._user.roles, item => {
+          return item === 'admin';
+        }) >= 0
+      ){
         next();
-      } else {
-        res.status(403).end();
+      }else{
+        if (tweet.c) {
+          next();
+        } else {
+          res.status(403).end();
+        }
       }
+
     })
     .catch(next);
 };

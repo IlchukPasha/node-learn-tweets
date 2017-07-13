@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 const Validator = require('./../middlewares/validators/Validator');
 
 const User = require('../models/user');
-const Role = require('../models/role');
 
 router.post('/signin', function(req, res, next) {
   let validate = new Validator(req.body, User.rules.signin, User.messages.signin);
@@ -44,26 +43,23 @@ router.post('/signup', function(req, res, next) {
 
   // run only one callback from passes or from fails
   validate.passes(function() {
-    Role.getByTitle('user', function(err, role) {
-      if (err) {
-        return next(err);
-      }
-      let user = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, salt),
-        role_id: role.id
-      };
+    console.log('passses');
 
-      knex('users')
-        .insert(user)
-        .then(function(user_id) {
-          let token = jwt.sign({ id: user_id[0] }, env.secret, { expiresIn: '120d' });
-          res.status(201).json({ token });
-        })
-        .catch(next);
-    });
+    let user = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, salt),
+      roles: 'user'
+    };
+
+    knex('users')
+      .insert(user)
+      .then(function(user_id) {
+        let token = jwt.sign({ id: user_id[0] }, env.secret, { expiresIn: '120d' });
+        res.status(201).json({ token });
+      })
+      .catch(next);
   });
 
   validate.fails(function() {

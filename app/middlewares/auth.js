@@ -24,9 +24,6 @@ module.exports = function(req, res, next) {
           if (err) return next(err);
           if (!user) return next(new Error('User not found'));
           req._user = user;
-          if (req.files.image) {
-            req._image = req.files.image;
-          }
           next();
         });
       }

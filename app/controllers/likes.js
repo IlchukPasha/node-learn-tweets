@@ -4,12 +4,9 @@ const router = express.Router();
 let Like = require('../models/like');
 let Validator = require('../middlewares/validators/Validator');
 
-const {
-  checkRepeatLike: checkRepeatLikeMdwr,
-  validateRemoveLike: validateRemoveLikeMdwr
-} = require('./../middlewares');
+const { repeat_like: repeat_like_mdwr, validators: { remove_like: remove_like_mdwr } } = require('./../middlewares');
 
-router.post('/', checkRepeatLikeMdwr, function(req, res, next) {
+router.post('/', repeat_like_mdwr, function(req, res, next) {
   let like = {
     user_id: req._user.id,
     tweet_id: req.body.tweet_id
@@ -22,7 +19,7 @@ router.post('/', checkRepeatLikeMdwr, function(req, res, next) {
   });
 });
 
-router.delete('/', validateRemoveLikeMdwr, function(req, res, next) {
+router.delete('/', remove_like_mdwr, function(req, res, next) {
   let like = {
     user_id: req._user.id,
     tweet_id: req.body.tweet_id
