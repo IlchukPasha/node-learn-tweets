@@ -2,6 +2,8 @@ const { findIndex } = require('lodash');
 const bcrypt = require('bcrypt-nodejs');
 const salt = bcrypt.genSaltSync(10);
 
+const { allowed_by } = require('./../helpers');
+
 module.exports = (req, res, next) => {
   let new_user = {
     first_name: req.body.first_name,
@@ -9,11 +11,7 @@ module.exports = (req, res, next) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, salt)
   };
-  if (
-    findIndex(req._user.roles, item => {
-      return item === 'admin';
-    }) >= 0
-  ) {
+  if (allowed_by(req._user.roles)) {
     if (req.body.roles) {
       new_user['roles'] = req.body.roles.join();
     }

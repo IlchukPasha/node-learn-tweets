@@ -4,14 +4,14 @@ const router = express.Router();
 let Like = require('../models/like');
 let Validator = require('../middlewares/validators/Validator');
 
-const { repeat_like: repeat_like_mw, validators: { remove_like: remove_like_mw } } = require('./../middlewares');
+const { like_repeat: like_repeat_mw, validators: { like_remove: like_remove_mw } } = require('./../middlewares');
 
-router.post('/', repeat_like_mw, function(req, res, next) {
+router.post('/', like_repeat_mw, function(req, res, next) {
   let like = {
     user_id: req._user.id,
     tweet_id: req.body.tweet_id
   };
-  Like.insert(like, function(err, like_id) {
+  Like.insert(like, err => {
     if (err) {
       return next(err);
     }
@@ -19,7 +19,7 @@ router.post('/', repeat_like_mw, function(req, res, next) {
   });
 });
 
-router.delete('/', remove_like_mw, function(req, res, next) {
+router.delete('/', like_remove_mw, function(req, res, next) {
   let like = {
     user_id: req._user.id,
     tweet_id: req.body.tweet_id

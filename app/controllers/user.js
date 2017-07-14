@@ -5,8 +5,8 @@ let User = require('./../models/user');
 
 let {
   role: role_mw,
-  current_user: current_user_mw,
-  update_user: update_user_mw,
+  user_current: user_current_mw,
+  user_update: user_update_mw,
   user_exist: user_exist_mw,
   validators: {
     user_create: user_create_validate_mw,
@@ -25,7 +25,7 @@ router.get('/', role_mw(['admin']), (req, res, next) => {
   });
 });
 
-router.get('/:id', current_user_mw, (req, res, next) => {
+router.get('/:id', user_current_mw, (req, res, next) => {
   User.getById(req.params.id, function(err, user) {
     if (err) {
       return next(err);
@@ -52,8 +52,8 @@ router.put(
   user_exist_mw,
   user_update_validate_mw,
   user_email_validate_mw,
-  current_user_mw,
-  update_user_mw,
+  user_current_mw,
+  user_update_mw,
   (req, res, next) => {
     User.update(req.params.id, req._update_user, err => {
       if (err) {

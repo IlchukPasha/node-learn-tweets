@@ -31,8 +31,8 @@ let Like = bookshelf.Model.extend(
     insert: function(like, cb) {
       knex('likes')
         .insert(like)
-        .then(function(like_id) {
-          cb(null, like_id);
+        .then(() => {
+          cb();
         })
         .catch(cb);
     },

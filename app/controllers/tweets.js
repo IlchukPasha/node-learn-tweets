@@ -9,7 +9,6 @@ const Validator = require('./../middlewares/validators/Validator');
 const {
   tweet_owner: tweet_owner_mw,
   image_upload: image_upload_mw,
-  image_delete: image_delete_mw,
   validators: { tweet: validate_tweet_mw }
 } = require('../middlewares');
 
@@ -50,7 +49,7 @@ router.post('/', validate_tweet_mw, image_upload_mw, (req, res, next) => {
   });
 });
 
-router.put('/:id', tweet_owner_mw, validate_tweet_mw, image_upload_mw, image_delete_mw, (req, res, next) => {
+router.put('/:id', tweet_owner_mw, validate_tweet_mw, image_upload_mw, (req, res, next) => {
   let tweet = {
     message: req.body.message
   };
@@ -60,6 +59,9 @@ router.put('/:id', tweet_owner_mw, validate_tweet_mw, image_upload_mw, image_del
   Tweet.update(req.params.id, tweet, err => {
     if (err) {
       return next(err);
+    }
+    if (fs.existsSync(req._image_to_delete)) {
+      fs.unlink(req._image_to_delete, () => {});
     }
     res.status(200).end();
   });

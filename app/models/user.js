@@ -2,6 +2,8 @@ const bookshelf = require('../libs/bookshelf');
 const knex = require('./../libs/knex');
 bookshelf.plugin('registry');
 
+const { each } = require('lodash');
+
 let User = bookshelf.Model.extend(
   {
     // instance methods
@@ -89,9 +91,7 @@ let User = bookshelf.Model.extend(
           'u.last_name as last_name'
         )
         .then(users => {
-          for (let i = 0; i < users.length; i++) {
-            users[i].roles = users[i].roles.split(',');
-          }
+          each(users, user => (user.roles = user.roles.split(',')));
           cb(null, users);
         })
         .catch(cb);
