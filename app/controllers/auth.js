@@ -43,8 +43,6 @@ router.post('/signup', function(req, res, next) {
 
   // run only one callback from passes or from fails
   validate.passes(function() {
-    console.log('passses');
-
     let user = {
       first_name: req.body.first_name,
       last_name: req.body.last_name,

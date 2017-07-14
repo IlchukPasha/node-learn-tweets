@@ -89,10 +89,8 @@ let User = bookshelf.Model.extend(
           'u.last_name as last_name'
         )
         .then(users => {
-          if (users) {
-            for (let i = 0; i < users.length; i++) {
-              users[i].roles = users[i].roles.split(',');
-            }
+          for (let i = 0; i < users.length; i++) {
+            users[i].roles = users[i].roles.split(',');
           }
           cb(null, users);
         })
@@ -114,7 +112,7 @@ let User = bookshelf.Model.extend(
     update: function(user_id, user, cb) {
       knex('users as u')
         .update(user)
-        .where('u.id',user_id)
+        .where('u.id', user_id)
         .then(() => {
           cb(null);
         })

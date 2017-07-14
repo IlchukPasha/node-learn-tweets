@@ -2,7 +2,7 @@ exports.up = function(knex, Promise) {
   return knex.schema.table('users', table => {
     table.dropForeign('role_id');
     table.dropColumn('role_id');
-    table.string('roles', 20).notNullable();
+    table.string('roles', 100).notNullable();
   });
 };
 

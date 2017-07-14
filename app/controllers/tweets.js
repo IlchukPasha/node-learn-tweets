@@ -7,9 +7,10 @@ const fs = require('fs');
 const Validator = require('./../middlewares/validators/Validator');
 
 const {
-  tweet_owner: tweet_owner_mdwr,
-  image_upload: image_upload_mdwr,
-  validators: { tweet: validate_tweet_mdwr }
+  tweet_owner: tweet_owner_mw,
+  image_upload: image_upload_mw,
+  image_delete: image_delete_mw,
+  validators: { tweet: validate_tweet_mw }
 } = require('../middlewares');
 
 const Tweet = require('../models/tweet');
@@ -35,7 +36,7 @@ router.get('/:id', (req, res, next) => {
     .catch(next);
 });
 
-router.post('/', validate_tweet_mdwr, image_upload_mdwr, (req, res, next) => {
+router.post('/', validate_tweet_mw, image_upload_mw, (req, res, next) => {
   let tweet = {
     message: req.body.message,
     image: req._targetPath || null,
@@ -49,7 +50,7 @@ router.post('/', validate_tweet_mdwr, image_upload_mdwr, (req, res, next) => {
   });
 });
 
-router.put('/:id', tweet_owner_mdwr, validate_tweet_mdwr, image_upload_mdwr, (req, res, next) => {
+router.put('/:id', tweet_owner_mw, validate_tweet_mw, image_upload_mw, image_delete_mw, (req, res, next) => {
   let tweet = {
     message: req.body.message
   };
@@ -64,13 +65,13 @@ router.put('/:id', tweet_owner_mdwr, validate_tweet_mdwr, image_upload_mdwr, (re
   });
 });
 
-router.delete('/:id', tweet_owner_mdwr, (req, res, next) => {
+router.delete('/:id', tweet_owner_mw, (req, res, next) => {
   Tweet.remove(req.params.id, err => {
     if (err) {
       return next(err);
     }
-    if (fs.existsSync(req._image)) {
-      fs.unlink(req._image, err => {
+    if (fs.existsSync(req._image_to_delete)) {
+      fs.unlink(req._image_to_delete, err => {
         if (err) {
           return next(err);
         }
