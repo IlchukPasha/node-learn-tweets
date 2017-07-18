@@ -22,12 +22,17 @@ let config = {
   }
 };
 
+process.env.SITE_URL = 'http://localhost:1337';
+
 switch (process.env.NODE_ENV) {
   case 'production':
     config.db.connection.host = 'production_host';
     config.db.connection.user = 'production_user';
     config.db.connection.password = 'production_password';
     config.db.connection.database = 'production_database';
+    break;
+  case 'testing':
+    config.db.connection.database = 'twitter_like_db_test';
     break;
   default:
     break;

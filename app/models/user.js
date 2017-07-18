@@ -54,7 +54,7 @@ let User = bookshelf.Model.extend(
         'min.password': 'Length of password must be greater then 5',
         'required.first_name': 'First name is required',
         'min.first_name': 'Length of first name must be greater then 5',
-        'max.first_name': 'Length of first name must be less then 5',
+        'max.first_name': 'Length of first name must be less then 30',
         'required.last_name': 'Last name is required',
         'min.last_name': 'Length of last name must be greater then 5',
         'max.last_name': 'Length of last name must be less then 30'

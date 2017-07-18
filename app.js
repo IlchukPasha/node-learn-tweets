@@ -8,7 +8,7 @@ let multipart = require('connect-multiparty');
 
 let app = express();
 
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(multipart());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,5 +40,7 @@ app.use(function(err, req, res, next) {
       break;
   }
 });
+
+app.listen(process.env.PORT || 1337);
 
 module.exports = app;

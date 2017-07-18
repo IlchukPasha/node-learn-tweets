@@ -4,6 +4,7 @@ const knex = require('./../libs/knex');
 const util = require('util');
 const uuid = require('uuid/v4');
 const fs = require('fs');
+const { parallel } = require('async');
 const Validator = require('./../middlewares/validators/Validator');
 
 const {
@@ -15,11 +16,28 @@ const {
 const Tweet = require('../models/tweet');
 
 router.get('/', (req, res, next) => {
-  knex('tweets')
-    .then(tweets => {
-      res.json(tweets);
-    })
-    .catch(next);
+  parallel(
+    {
+      count: callback => {
+        knex('tweets as t').count('t.id as c').first().asCallback(callback);
+      },
+      list: callback => {
+        knex('tweets')
+          .limit(req.query.limit)
+          .offset(req.query.page * req.query.limit - req.query.limit)
+          .asCallback(callback);
+      }
+    },
+    (err, results) => {
+      if (err) {
+        return res.status(400).end();
+      }
+      return res.json({
+        count: results.count.c,
+        data: results.list
+      });
+    }
+  );
 });
 
 router.get('/:id', (req, res, next) => {

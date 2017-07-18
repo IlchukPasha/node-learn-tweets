@@ -25,6 +25,22 @@ exports.up = knex => {
       last_name: 'user2_last_name',
       email: 'user2@user2.com',
       password: bcrypt.hashSync('password', salt),
+      roles: 'user'
+    },
+    {
+      id: 4,
+      first_name: 'user3_first_name',
+      last_name: 'user3_last_name',
+      email: 'user3@user3.com',
+      password: bcrypt.hashSync('password', salt),
+      roles: 'user'
+    },
+    {
+      id: 5,
+      first_name: 'adminuser_name',
+      last_name: 'adminuser_last_name',
+      email: 'adminuser@adminuser.com',
+      password: bcrypt.hashSync('password', salt),
       roles: 'admin,user'
     }
   ]);
