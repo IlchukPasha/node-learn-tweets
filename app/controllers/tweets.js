@@ -16,16 +16,15 @@ const {
 const Tweet = require('../models/tweet');
 
 router.get('/', (req, res, next) => {
+  let limit = req.query.limit ? req.query.limit : 5;
+  let page = req.query.page ? req.query.page : 1;
   parallel(
     {
       count: callback => {
         knex('tweets as t').count('t.id as c').first().asCallback(callback);
       },
       list: callback => {
-        knex('tweets')
-          .limit(req.query.limit)
-          .offset(req.query.page * req.query.limit - req.query.limit)
-          .asCallback(callback);
+        knex('tweets').limit(limit).offset(page * limit - limit).asCallback(callback);
       }
     },
     (err, results) => {

@@ -22,7 +22,7 @@ module.exports = function(req, res, next) {
       if (decoded) {
         User.getById(decoded.id, function(err, user) {
           if (err) return next(err);
-          if (!user) return next(new Error('User not found'));
+          if (!user) return res.status(404).end();
           req._user = user;
           next();
         });
