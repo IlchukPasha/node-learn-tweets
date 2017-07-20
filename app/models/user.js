@@ -1,5 +1,6 @@
 const bookshelf = require('../libs/bookshelf');
 const knex = require('./../libs/knex');
+const { roles: env_roles } = require('./../../app/config');
 bookshelf.plugin('registry');
 
 const { each } = require('lodash');
@@ -36,7 +37,7 @@ let User = bookshelf.Model.extend(
         password: 'required|min:5',
         first_name: 'required|min:5|max:30',
         last_name: 'required|min:5|max:30',
-        roles: 'required|roles_exist'
+        roles: 'required|array|in:' + env_roles.join()
       }
     },
 
@@ -57,7 +58,9 @@ let User = bookshelf.Model.extend(
         'max.first_name': 'Length of first name must be less then 30',
         'required.last_name': 'Last name is required',
         'min.last_name': 'Length of last name must be greater then 5',
-        'max.last_name': 'Length of last name must be less then 30'
+        'max.last_name': 'Length of last name must be less then 30',
+        'array.roles': 'Roles must be array',
+        'in.roles': 'The selected roles is invalid'
       }
     },
 

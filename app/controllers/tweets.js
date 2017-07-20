@@ -4,8 +4,10 @@ const knex = require('./../libs/knex');
 const util = require('util');
 const uuid = require('uuid/v4');
 const fs = require('fs');
+const path = require('path');
 const { parallel } = require('async');
 const Validator = require('./../middlewares/validators/Validator');
+const { image_path } = require('./../config');
 
 const {
   tweet_owner: tweet_owner_mw,
@@ -53,6 +55,11 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/', validate_tweet_mw, image_upload_mw, (req, res, next) => {
+  if (process.env.NODE_ENV !== 'testing') {
+    if (req._targetPath) {
+      req._targetPath = path.join(image_path, path.basename(req._targetPath));
+    }
+  }
   let tweet = {
     message: req.body.message,
     image: req._targetPath || null,

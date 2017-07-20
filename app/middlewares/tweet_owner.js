@@ -10,11 +10,11 @@ module.exports = function(req, res, next) {
     .where('t.id', req.params.id)
     .first()
     .then(tweet => {
-      if (tweet && (tweet.user_id === id || allowed_by(roles))) {
+      if (tweet && (allowed_by(roles) || tweet.user_id === id)) {
         req._image_to_delete = tweet.image;
         next();
       } else {
-        res.status(404).end();
+        res.status(403).end();
       }
     })
     .catch(next);

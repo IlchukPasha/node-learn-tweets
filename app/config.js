@@ -3,6 +3,7 @@ const path = require('path');
 let config = {
   secret: '12qw34er56ty',
   roles: ['admin', 'user'],
+  image_path: 'public/upload/',
   db: {
     client: 'mysql',
     connection: {

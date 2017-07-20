@@ -2,8 +2,6 @@ const Validator = require('./../../middlewares/validators/Validator');
 const Tweet = require('./../../models/tweet');
 
 module.exports = (req, res, next) => {
-  let image_type = req._image ? req._image.type : '';
-
   let validateObject = req.body;
   let rules = {
     message: 'required'

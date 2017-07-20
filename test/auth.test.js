@@ -39,7 +39,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(201, res.statusCode, 'not correct status code');
+        assert.equal(201, res.statusCode, 'status code must be 201');
         assert.notEqual(null, res.body.token, 'empty token');
         done();
       });
@@ -55,7 +55,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -71,7 +71,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -87,7 +87,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -102,7 +102,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -118,7 +118,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -133,7 +133,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -149,7 +149,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -165,7 +165,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -180,7 +180,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -196,7 +196,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -212,7 +212,7 @@ describe('auth tests', () => {
       })
       .end((err, res) => {
         assert.equal(null, err);
-        assert.equal(400, res.statusCode, 'not correct status code');
+        assert.equal(400, res.statusCode, 'status code must be 400');
         done();
       });
   });
@@ -220,7 +220,7 @@ describe('auth tests', () => {
   it('signin', done => {
     agent.post(urls.signin).send({ email: 'some_test_user@test.com', password: 'password' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(200, res.statusCode);
+      assert.equal(200, res.statusCode, 'status code must be 200');
       assert.notEqual(null, res.body.token, 'empty token');
       done();
     });
@@ -229,7 +229,7 @@ describe('auth tests', () => {
   it('signin with email that not exist', done => {
     agent.post(urls.signin).send({ email: 'notexist@test.com', password: 'password' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(401, res.statusCode);
+      assert.equal(401, res.statusCode, 'status code must be 401');
       done();
     });
   });
@@ -237,7 +237,7 @@ describe('auth tests', () => {
   it('signin with incorrect password', done => {
     agent.post(urls.signin).send({ email: 'some_test_user@test.com', password: 'some password' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(401, res.statusCode);
+      assert.equal(401, res.statusCode, 'status code must be 401');
       done();
     });
   });
@@ -245,7 +245,7 @@ describe('auth tests', () => {
   it('signin without email', done => {
     agent.post(urls.signin).send({ password: 'password' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(400, res.statusCode);
+      assert.equal(400, res.statusCode, 'status code must be 400');
       done();
     });
   });
@@ -253,7 +253,7 @@ describe('auth tests', () => {
   it('signin with invalid email', done => {
     agent.post(urls.signin).send({ email: 'email', password: 'password' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(400, res.statusCode);
+      assert.equal(400, res.statusCode, 'status code must be 400');
       done();
     });
   });
@@ -261,7 +261,7 @@ describe('auth tests', () => {
   it('signin without password', done => {
     agent.post(urls.signin).send({ email: 'some_test_user@test.com' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(400, res.statusCode);
+      assert.equal(400, res.statusCode, 'status code must be 400');
       done();
     });
   });
@@ -269,7 +269,7 @@ describe('auth tests', () => {
   it('signin with password less then 5', done => {
     agent.post(urls.signin).send({ email: 'some_test_user@test.com', password: 'pass' }).end((err, res) => {
       assert.equal(null, err);
-      assert.equal(400, res.statusCode);
+      assert.equal(400, res.statusCode, 'status code must be 400');
       done();
     });
   });

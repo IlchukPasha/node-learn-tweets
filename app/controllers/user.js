@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt-nodejs');
+const salt = bcrypt.genSaltSync(10);
 
 let User = require('./../models/user');
 
@@ -39,6 +41,7 @@ router.get('/:id', user_current_mw, (req, res, next) => {
 
 // only admin
 router.post('/', role_mw(['admin']), user_create_validate_mw, (req, res, next) => {
+  req.body.password = bcrypt.hashSync(req.body.password, salt);
   User.insert(req.body, err => {
     if (err) {
       return next(err);

@@ -3,6 +3,7 @@ const knex = require('./../libs/knex');
 const util = require('util');
 const uuid = require('uuid/v4');
 const path = require('path');
+const os = require('os');
 
 const Validator = require('./../middlewares/validators/Validator');
 
@@ -50,7 +51,7 @@ let Tweet = bookshelf.Model.extend(
       knex('tweets as tweet')
         .where('tweet.id', tweet_id)
         .update(tweet)
-        .then( () => {
+        .then(() => {
           cb(null);
         })
         .catch(function(err) {
@@ -61,15 +62,28 @@ let Tweet = bookshelf.Model.extend(
       knex('tweets')
         .where('tweets.id', tweet_id)
         .del()
-        .then( () => {
+        .then(() => {
           cb(null);
         })
         .catch(cb);
     },
 
     generatePath: image => {
-      let image_name = util.format('%s%s', uuid(), path.extname(image.originalFilename));
-      return 'public/images/uploaded/' + image_name;
+      let image_name = null;
+      let { originalFilename } = image;
+      switch (process.env.NODE_ENV) {
+        case 'testing':
+          image_name = path.join(os.tmpdir(), originalFilename);
+          break;
+        default:
+          image_name = path.join(
+            __dirname,
+            './../../public/upload',
+            util.format('%s%s', uuid(), path.extname(originalFilename))
+          );
+          break;
+      }
+      return image_name;
     }
   }
 );
