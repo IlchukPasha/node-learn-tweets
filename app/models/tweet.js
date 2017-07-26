@@ -40,10 +40,10 @@ let Tweet = bookshelf.Model.extend(
     insert: function(tweet, cb) {
       knex('tweets')
         .insert(tweet)
-        .then(function(tweet_id) {
+        .then((tweet_id) => {
           cb(null, tweet_id);
         })
-        .catch(function(err) {
+        .catch((err) => {
           cb(err);
         });
     },

@@ -5,9 +5,17 @@ const util = require('util');
 const uuid = require('uuid/v4');
 const fs = require('fs');
 const path = require('path');
-const { parallel } = require('async');
+const { parallel, each } = require('async');
 const Validator = require('./../middlewares/validators/Validator');
 const { image_path } = require('./../config');
+
+const redis = require('redis');
+
+let client = redis.createClient();
+
+client.on('connect', () => {
+  console.log('connect to redis');
+});
 
 const {
   tweet_owner: tweet_owner_mw,
@@ -18,25 +26,47 @@ const {
 const Tweet = require('../models/tweet');
 
 router.get('/', (req, res, next) => {
-  let limit = req.query.limit ? req.query.limit : 5;
+  let limit = req.query.limit ? req.query.limit : 1000;
   let page = req.query.page ? req.query.page : 1;
+
   parallel(
     {
-      count: callback => {
-        knex('tweets as t').count('t.id as c').first().asCallback(callback);
-      },
       list: callback => {
-        knex('tweets').limit(limit).offset(page * limit - limit).asCallback(callback);
+        client.get('list', callback);
       }
     },
     (err, results) => {
       if (err) {
         return res.status(400).end();
       }
-      return res.json({
-        count: results.count.c,
-        data: results.list
-      });
+      if (results.list) {
+        console.log('from redis');
+        return res.json(JSON.parse(results.list));
+      } else {
+        console.log('from tweets');
+        parallel(
+          {
+            count: callback => {
+              knex('tweets as t').count('t.id as c').first().asCallback(callback);
+            },
+            list: callback => {
+              knex('tweets').limit(limit).offset(page * limit - limit).asCallback(callback);
+            }
+          },
+          (err, results) => {
+            if (err) {
+              return res.status(400).end();
+            }
+
+            client.set('list', JSON.stringify({ list: results.list, count: results.count.c }));
+
+            return res.json({
+              count: results.count.c,
+              data: results.list
+            });
+          }
+        );
+      }
     }
   );
 });
@@ -69,7 +99,8 @@ router.post('/', validate_tweet_mw, image_upload_mw, (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.status(201).end();
+    client.del('list');
+    return res.status(201).end();
   });
 });
 
@@ -87,6 +118,7 @@ router.put('/:id', tweet_owner_mw, validate_tweet_mw, image_upload_mw, (req, res
     if (fs.existsSync(req._image_to_delete)) {
       fs.unlink(req._image_to_delete, () => {});
     }
+    client.del('list');
     res.status(200).end();
   });
 });
@@ -101,9 +133,11 @@ router.delete('/:id', tweet_owner_mw, (req, res, next) => {
         if (err) {
           return next(err);
         }
+        client.del('list');
         res.status(204).end();
       });
     } else {
+      client.del('list');
       res.status(204).end();
     }
   });
