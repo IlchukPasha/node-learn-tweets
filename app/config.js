@@ -9,7 +9,7 @@ let config = {
     connection: {
       host: 'localhost',
       user: 'root',
-      password: '123456',
+      password: '1',
       database: 'twitter_like_db',
       port: '3306'
     },

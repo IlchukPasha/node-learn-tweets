@@ -14,7 +14,7 @@ let Like = bookshelf.Model.extend(
   },
   {
     rules: {
-      like:{
+      like: {
         tweet_id: 'required|tweet_exist'
       },
       remove: {
